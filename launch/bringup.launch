@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<launch>
+  <node pkg="dualFisheyeVS" type="dualFisheyeVS" name="dualFisheyeVS" output="screen" respawn="false">
+    <param name="leftCameraTopic" value="/camera_back/image_raw" />
+    <param name="rightCameraTopic" value="/camera_front/image_raw" />
+    <param name="gain" value="0.1"/>
+  </node>
+</launch>
