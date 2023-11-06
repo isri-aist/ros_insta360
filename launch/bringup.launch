@@ -1,8 +1,63 @@
 <?xml version="1.0"?>
 <launch>
-  <node pkg="dualFisheyeVS" type="dualFisheyeVS" name="dualFisheyeVS" output="screen" respawn="false">
-    <param name="leftCameraTopic" value="/camera_back/image_raw" />
-    <param name="rightCameraTopic" value="/camera_front/image_raw" />
-    <param name="gain" value="0.1"/>
-  </node>
+
+    <arg name="cameraStreamFlag" value="25" /> <!-- Best flag so far for LEFT-RIGHT hemispherical stream -->
+    <arg name="rightCameraTopic" value="/insta360/right/image_raw" />
+    <arg name="leftCameraTopic" value="/insta360/left/image_raw" />
+    <arg name="rightCameraInfoTopic" value="/insta360/right/camera_info" />
+    <arg name="leftCameraInfoTopic" value="/insta360/left/camera_info" />
+    <arg name="rightCameraWidth" value="1152" />        <!-- TODO: YAML for all the cam params.... -->
+    <arg name="rightCameraHeight" value="560" />
+    <arg name="leftCameraWidth" value="1152" />
+    <arg name="leftCameraHeight" value="560" />
+    <arg name="rightCameraK_au" value="922.516889"/>
+    <arg name="rightCameraK_av" value="924.37605" />
+    <arg name="rightCameraK_u0" value="574.28678" />
+    <arg name="rightCameraK_v0" value="577.50644" />
+    <arg name="rightCameraD_r1" value="0.0" />
+    <arg name="rightCameraD_r2" value="0.0" />
+    <arg name="rightCameraD_p1" value="0.0" />
+    <arg name="rightCameraD_p2" value="0.0" />
+    <arg name="rightCameraD_xi" value="1.63172" />
+    <arg name="leftCameraK_au" value="905.63493"/>
+    <arg name="leftCameraK_av" value="907.68850" />
+    <arg name="leftCameraK_u0" value="577.15881" />
+    <arg name="leftCameraK_v0" value="579.63735" />
+    <arg name="leftCameraD_r1" value="0.0" />
+    <arg name="leftCameraD_r2" value="0.0" />
+    <arg name="leftCameraD_p1" value="0.0" />
+    <arg name="leftCameraD_p2" value="0.0" />
+    <arg name="leftCameraD_xi" value="1.60230" />
+
+    <!-- Insta360 dual hemispherical cameras bringup-->
+    <node pkg="insta360" type="insta360" name="insta360" output="screen" respawn="false">
+        <param name="cameraStreamFlag" value="$(arg cameraStreamFlag)" />
+        <param name="leftCameraInfoTopic" value="$(arg leftCameraInfoTopic)" />
+        <param name="rightCameraInfoTopic" value="$(arg rightCameraInfoTopic)" />
+        <param name="leftCameraTopic" value="$(arg leftCameraTopic)" />
+        <param name="rightCameraTopic" value="$(arg rightCameraTopic)" />
+        <param name="rightCameraWidth" value="$(arg rightCameraWidth)" />
+        <param name="rightCameraHeight" value="$(arg rightCameraHeight)" />
+        <param name="leftCameraWidth" value="$(arg leftCameraWidth)" />
+        <param name="leftCameraHeight" value="$(arg leftCameraHeight)" />
+        <param name="rightCameraK_au" value="$(arg rightCameraK_au)" />
+        <param name="rightCameraK_av" value="$(arg rightCameraK_av)" />
+        <param name="rightCameraK_u0" value="$(arg rightCameraK_u0)" />
+        <param name="rightCameraK_v0" value="$(arg rightCameraK_v0)" />
+        <param name="rightCameraD_r1" value="$(arg rightCameraD_r1)" />
+        <param name="rightCameraD_r2" value="$(arg rightCameraD_r2)" />
+        <param name="rightCameraD_p1" value="$(arg rightCameraD_p1)" />
+        <param name="rightCameraD_p2" value="$(arg rightCameraD_p2)" />
+        <param name="rightCameraD_xi" value="$(arg rightCameraD_xi)" />
+        <param name="leftCameraK_au" value="$(arg leftCameraK_au)" />
+        <param name="leftCameraK_av" value="$(arg leftCameraK_av)" />
+        <param name="leftCameraK_u0" value="$(arg leftCameraK_u0)" />
+        <param name="leftCameraK_v0" value="$(arg leftCameraK_v0)" />
+        <param name="leftCameraD_r1" value="$(arg leftCameraD_r1)" />
+        <param name="leftCameraD_r2" value="$(arg leftCameraD_r2)" />
+        <param name="leftCameraD_p1" value="$(arg leftCameraD_p1)" />
+        <param name="leftCameraD_p2" value="$(arg leftCameraD_p2)" />
+        <param name="leftCameraD_xi" value="$(arg leftCameraD_xi)" />
+    </node>
+
 </launch>

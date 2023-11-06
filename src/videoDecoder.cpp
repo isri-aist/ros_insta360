@@ -9,6 +9,8 @@ videoDecoder::videoDecoder(){
         exit(1);
     }
 
+    avcodec_register_all();
+
     codec = avcodec_find_decoder(AV_CODEC_ID_H264);
     if (!codec){
         fprintf(stderr, "Codec not found\n");

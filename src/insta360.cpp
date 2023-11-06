@@ -8,41 +8,73 @@
 
 int main(int argc, char **argv){
     ros::init(argc, argv, "insta360");
-    ros::NodeHandle n;
-    ros::Publisher rightImgPub = n.advertise<sensor_msgs::Image>("/insta360/right/image_raw", 30);
-    ros::Publisher leftImgPub = n.advertise<sensor_msgs::Image>("/insta360/left/image_raw", 30);
-    ros::Publisher rightCameraInfoPub = n.advertise<sensor_msgs::CameraInfo>("/insta360/right/camera_info", 30);
-    ros::Publisher leftCameraInfoPub = n.advertise<sensor_msgs::CameraInfo>("/insta360/left/camera_info", 30);
+    ros::NodeHandle n("~");
+
+    ////READ LAUNCH PARAMS
+    int cameraStreamFlag = n.param("cameraStreamFlag", 25);
+    std::string rightCameraTopic = n.param<std::string>("rightCameraTopic", "/insta360/right/image_raw");
+    std::string leftCameraTopic = n.param<std::string>("leftCameraTopic", "/insta360/left/image_raw");
+    std::string rightCameraInfoTopic = n.param<std::string>("rightCameraInfoTopic", "/insta360/right/camera_info");
+    std::string leftCameraInfoTopic = n.param<std::string>("leftCameraInfoTopic", "/insta360/left/camera_info");
+    int rightCameraWidth = n.param("rightCameraWidth", 1152);
+    int rightCameraHeight = n.param("rightCameraHeight", 560);
+    int leftCameraWidth = n.param("leftCameraWidth", 1152);
+    int leftCameraHeight = n.param("leftCameraHeight", 560);
+    std::vector<double>  rightCameraK = { n.param("rightCameraK_au", 900.0),
+                                       n.param("rightCameraK_av", 900.0),
+                                       n.param("rightCameraK_u0", 550.0),
+                                       n.param("rightCameraK_v0", 550.0)};
+    std::vector<double>  leftCameraK = { n.param("leftCameraK_au", 900.0),
+                                              n.param("leftCameraK_av", 900.0),
+                                              n.param("leftCameraK_u0", 550.0),
+                                              n.param("leftCameraK_v0", 550.0)};
+    std::vector<double>  rightCameraD = { n.param("rightCameraD_r1", 0.0),
+                                               n.param("rightCameraD_r2", 0.0),
+                                               n.param("rightCameraD_p1", 0.0),
+                                               n.param("rightCameraD_p2", 0.0),
+                                               n.param("rightCameraD_xi", 1.5)};
+    std::vector<double>  leftCameraD = { n.param("leftCameraD_r1", 0.0),
+                                              n.param("leftCameraD_r2", 0.0),
+                                              n.param("leftCameraD_p1", 0.0),
+                                              n.param("leftCameraD_p2", 0.0),
+                                              n.param("leftCameraD_xi", 1.5)};
+
+    ////PUBLISHERS
+    ros::Publisher rightImgPub = n.advertise<sensor_msgs::Image>(rightCameraTopic, 30);
+    ros::Publisher leftImgPub = n.advertise<sensor_msgs::Image>(leftCameraTopic, 30);
+    ros::Publisher rightCameraInfoPub = n.advertise<sensor_msgs::CameraInfo>(rightCameraInfoTopic, 30);
+    ros::Publisher leftCameraInfoPub = n.advertise<sensor_msgs::CameraInfo>(leftCameraInfoTopic, 30);
     ros::Rate loop_rate(30);
 
-    insta360Camera camera((ins_camera::VideoResolution)25);
+    ///CAMERA DRIVER
+    insta360Camera camera((ins_camera::VideoResolution)cameraStreamFlag); // BEST FLAG SO FAR...
+
+    ////BUILD ROS MESSAGES
     cv::Mat I, R, L;
     sensor_msgs::ImagePtr Rmsg, Lmsg;
     sensor_msgs::CameraInfo RInfomsg, LInfomsg;
 
-    ////TODO: read from params file
-    RInfomsg.width = 1152;
-    RInfomsg.height = 1152;
-    RInfomsg.K = {587.24019, 0, 575.36742, 0, 589.09648, 580.39315, 0 ,0 ,1 };
-    RInfomsg.D = {-0.23127,   0.03318,   -0.00079,   -0.00058,  0.72458};
+    RInfomsg.width = rightCameraWidth;
+    RInfomsg.height = rightCameraHeight;
+    RInfomsg.K = {rightCameraK[0], 0, rightCameraK[2], 0, rightCameraK[1], rightCameraK[3], 0 ,0 ,1 };
+    RInfomsg.D = {rightCameraD[0],   rightCameraD[1],   rightCameraD[2],   rightCameraD[3], rightCameraD[4]};
     RInfomsg.distortion_model = "r1r2p1p2xi";
     RInfomsg.header.frame_id = "/camera_right_optical_frame";
 
-    LInfomsg.width = 1152;
-    LInfomsg.height = 1152;
-    LInfomsg.K = {589.44525 , 0, 567.75937, 0, 591.69373,  576.11049, 0 ,0 ,1 };
-    LInfomsg.D = {-0.22796,   0.03118,   0.00034,   0.00057,  0.74222};
+    LInfomsg.width = leftCameraWidth;
+    LInfomsg.height = leftCameraHeight;
+    LInfomsg.K = {leftCameraK[0], 0, leftCameraK[2], 0, leftCameraK[1], leftCameraK[3], 0 ,0 ,1 };
+    LInfomsg.D = {leftCameraD[0],   leftCameraD[1],   leftCameraD[2],   leftCameraD[3], leftCameraD[4]};
     LInfomsg.distortion_model = "r1r2p1p2xi";
     LInfomsg.header.frame_id = "/camera_left_optical_frame";
 
+    ////SEND ROS MESSAGES
     while (ros::ok()) {
         I = camera.getRLImage();
         if(!I.empty()) {
             camera.extractLeftAndRightImages(I,L,R,true);
             ros::Time nowTime = ros::Time::now();
-
             RInfomsg.header.stamp = nowTime;
-
             LInfomsg.header.stamp = nowTime;
 
             Rmsg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", R).toImageMsg();

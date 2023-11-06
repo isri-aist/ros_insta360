@@ -1,5 +1,5 @@
 //
-// Created by nathan on 24/05/2022.
+// Created by Nathan Crombez on 24/05/2022.
 //
 
 #include "insta360Camera.h"
@@ -67,8 +67,8 @@ cv::Mat insta360Camera::getRLImage(){
 void insta360Camera::extractLeftAndRightImages(cv::Mat I, cv::Mat &L, cv::Mat &R, bool reoriented){
 
     if(reoriented){
-        cv::rotate(I(cv::Rect(0, 0,static_cast<int>(I.size().width / 2), I.size().height)) , L,0);
-        cv::rotate( I(cv::Rect(static_cast<int>(I.size().width / 2), 0,static_cast<int>(I.size().width / 2), I.size().height)), R , 2);
+        cv::rotate(I(cv::Rect(0, 0,static_cast<int>(I.size().width / 2), I.size().height)) , R,0);
+        cv::rotate( I(cv::Rect(static_cast<int>(I.size().width / 2), 0,static_cast<int>(I.size().width / 2), I.size().height)), L , 2);
     }else{
         I(cv::Rect(0, 0,static_cast<int>(I.size().width / 2), I.size().height));
         I(cv::Rect(static_cast<int>(I.size().width / 2), 0,static_cast<int>(I.size().width / 2), I.size().height));
