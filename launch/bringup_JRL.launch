@@ -7,9 +7,9 @@
     <arg name="leftCameraTopic" value="/insta360/left/image_raw" />
     <arg name="rightCameraInfoTopic" value="/insta360/right/camera_info" />
     <arg name="leftCameraInfoTopic" value="/insta360/left/camera_info" />
-    <arg name="calib" default="$(find insta360)/config/calib_insta360ONEX2_CIAD.yaml" doc="Calibration parameters"/>
-		<arg name="pathToDualHemisphericalMask" value="$(find insta360)/config/mask_insta360ONEX2_CIAD.png"/>
-
+    <arg name="calib" default="$(find insta360)/config/calib_insta360ONEX2_CIAD_full.yaml" doc="Calibration parameters"/>
+	<arg name="pathToDualHemisphericalMask" value="$(find insta360)/config/mask_insta360ONEX2_JRL_full.png"/>
+    <arg name="imageScale" value="0.04" />
 
     <arg name="dual2equi" default="1"/>
 
@@ -20,6 +20,7 @@
         <param name="rightCameraInfoTopic" value="$(arg rightCameraInfoTopic)" />
         <param name="leftCameraTopic" value="$(arg leftCameraTopic)" />
         <param name="rightCameraTopic" value="$(arg rightCameraTopic)" />
+        <param name="imageScale" value="$(arg imageScale)" />
         <rosparam file="$(arg calib)"/>
     </node>
 
@@ -27,6 +28,7 @@
     <group if="$(eval arg('dual2equi') == 1)">
         <node pkg="insta360" type="dualhemisphreical2equi" name="dualhemisphreical2equi" output="screen" >
         	<param name="pathToDualHemisphericalMask" value="$(arg pathToDualHemisphericalMask)" />
+            <param name="maskScale" value="$(arg imageScale)" />
         </node>
         
     </group>

@@ -1,0 +1,14 @@
+rightCameraCalib:
+  size: {width: 1152, height: 1152}
+  k: {au: 922.516889, av: 924.37605, u0: 574.28678, v0: 577.50644}
+  d: {r1: 0.0, r2: 0.0, p1: 0.0, p2: 0.0, xi: 1.63172}
+  pose:
+    orientation: {w: 1.0, x: 0.0, y: 0.0, z: 0.0}
+    position: {x: 0.0, y: 0.0, z: 0.0}
+leftCameraCalib:
+  size: {width: 1152, height: 1152}
+  k: {au: 905.63493, av: 907.68850, u0: 577.15881, v0: 579.63735}
+  d: {r1: 0.0, r2: 0.0, p1: 0.0, p2: 0.0, xi: 1.60230}
+  pose:
+    orientation: {w: 0.002, x: -0.001, y: 1.0, z: -0.002}
+    position: {x: -0.002, y: -0.004, z: -0.019}
